@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+
+<meta name="robots" content="noindex">
+<html ng-app="app">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular.min.js"></script>
+  <link href="estilos.css" rel="stylesheet" type="text/css" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <title>Reto Liverpool</title>
+</head>
+<body>
+<div> <img src="http://www.liverpool.com.mx/images/logos/liverpool_logo.gif" alt="liverpool_logo"></div>
+<div ng-controller="ProductSearchCtrl">
+  <div class="bar">
+    <p>Buscador de productos:</p>
+    <input placeholder="escriba producto" ng-model="searchInput" ng-keyup="$event.keyCode == 13 && search()">
+    <button ng-click="search()">Buscar</button>
+  </div>
+  <div ng-show="showLoading" class="searchy">Buscando...</div>
+  <div ng-show="showSearch" class="show">
+    <p>Resultados de la busqueda ({{ products.length }}):</p>
+    <h2>{{searchTerm}}</h2>
+    <div ng-repeat="product in products" class="productsmi">
+      <ul>
+        <li> <img ng-src="{{ product.image }}"></li>
+        <li class="title"> {{ product.title }}</li>
+        <li class="price">$ {{ product.price }}</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script id="jsbin-javascript">
+angular
+  .module('app', [])
+  .controller('ProductSearchCtrl', ['$scope','$http', function($scope, $http) {
+    
+    var getApiUrl = function(item) { return 'http://www.liverpool.com.mx/tienda?s='+ item +'&d3106047a194921c01969dfdec083925=json'; }
+        
+    $scope.search = function() {
+      
+      var apiUrl = getApiUrl($scope.searchInput)
+
+      $scope.showLoading = true
+      $scope.showSearch = false
+      $scope.searchTerm = ''
+      
+      $http.get(apiUrl).then(function(dta) {
+        var json = dta.data
+          .contents[0]
+          .mainContent
+          .filter(function(value) {
+            return value.contents.length
+          })[0].contents[0].records
+        
+        var products = json.map(function(product) {
+          return {
+            title: product.attributes['product.displayName'][0],
+            image: product.attributes['product.smallImage'][0],
+            price: product.attributes['sku.list_Price'][0]
+          }
+        })
+                
+        $scope.showLoading = false
+        $scope.showSearch = true
+        $scope.searchTerm = $scope.searchInput
+
+        $scope.products = products
+      })
+    }
+  }])
+
+
+</script>
+</body>
+</html>
