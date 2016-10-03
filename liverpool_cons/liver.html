@@ -15,18 +15,18 @@
 <div ng-controller="ProductSearchCtrl">
   <div class="bar">
     <p>Buscador de productos:</p>
-    <input placeholder="" ng-model="searchInput" ng-keyup="$event.keyCode == 13 && search()">
+    <input placeholder="escriba producto" ng-model="searchInput" ng-keyup="$event.keyCode == 13 && search()">
     <button ng-click="search()">Buscar</button>
   </div>
   <div ng-show="showLoading" class="searchy">Buscando...</div>
-  <div ng-show="showSearch">
+  <div ng-show="showSearch" class="show">
     <p>Resultados de la busqueda ({{ products.length }}):</p>
     <h2>{{searchTerm}}</h2>
     <div ng-repeat="product in products" class="productsmi">
       <ul>
         <li> <img ng-src="{{ product.image }}"></li>
-        <li> {{ product.title }}</li>
-        <li> {{ product.price }}</li>
+        <li class="title"> {{ product.title }}</li>
+        <li class="price">$ {{ product.price }}</li>
       </ul>
     </div>
   </div>
